@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jumpImpulse = 15;
     [SerializeField] private float jumpTestOffset = 0.01f;
     [SerializeField] private Animator animator;
+
+    private bool isWalking;
     // Use this for initialization
     void Start () {
         rb = GetComponent<Rigidbody2D>();
@@ -24,7 +26,7 @@ public class PlayerController : MonoBehaviour {
         bool inputVert = Input.GetKey(KeyCode.W);
         float horSpeed = speed * Input.GetAxis("Horizontal");
 
-        if (inputVert && IsOnGround())
+        if (inputVert && isOnGround())
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse);
@@ -41,13 +43,16 @@ public class PlayerController : MonoBehaviour {
             transform.localScale = theScale;
         }
 
+        if (isWalking == true && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        {
+            isWalking = false;
+            StartCoroutine(waitAndSetWalkToFalse());
+        }
+
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
         {
-            animator.SetBool("Walk", true);
-        }
-        else
-        {
-            animator.SetBool("Walk", false);
+            isWalking = true;
+            animator.SetBool("Walk", isWalking);
         }
     }
 
@@ -63,23 +68,32 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private bool IsOnGround()
+    //check if the player is on the ground
+    //cast two distanced ray from the left bottom and right bottom
+    private bool isOnGround()
     {
         var boxCollider = GetComponent<BoxCollider2D>();
 
-        var start = boxCollider.bounds.min;
-        start.y -= jumpTestOffset;
+        var startLeft = boxCollider.bounds.min;
+        var startRight = boxCollider.bounds.max;
+        startRight.y -= boxCollider.bounds.size.y;
 
-        var end = boxCollider.bounds.max;
-        end.y = end.y - boxCollider.bounds.size.y - 2 * jumpTestOffset;
+        var mask = LayerMask.GetMask("Ground");
 
-        var cast = Physics2D.Linecast(start, end, LayerMask.GetMask("Ground"));
+        var hitLeft = Physics2D.Raycast(startLeft, Vector3.down, jumpTestOffset, mask);
+        var hitRight = Physics2D.Raycast(startRight, Vector3.down, jumpTestOffset, mask);
 
-        return cast.collider != null;
+        return hitLeft.collider != null || hitRight.collider != null;
     }
 
     void FixedUpdate(){
         //DebugDraw();
+    }
+
+    private IEnumerator waitAndSetWalkToFalse()
+    {
+        yield return new WaitForSeconds(0.8f);
+        animator.SetBool("Walk" , isWalking);
     }
 
     private void DebugDraw(){
