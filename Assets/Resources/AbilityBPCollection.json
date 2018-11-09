@@ -1,0 +1,10 @@
+{
+    "abilityBPCollection":[
+        {
+            "name": "absorb",
+            "damage" : 10,
+            "damageDelta" : 0.2,
+            "description" : "this ability can absorb enemy's skill! Yeah!"
+        }
+    ]
+}
