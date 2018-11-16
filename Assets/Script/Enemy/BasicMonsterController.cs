@@ -7,6 +7,7 @@ public class BasicMonsterController : MonoBehaviour {
     [SerializeField] float platformTestLendth;
     [SerializeField] Collider2D collider_;
     private Rigidbody2D rb;
+    bool absorbing = false;
     void Start () {
         rb = GetComponent<Rigidbody2D>();
 
@@ -57,7 +58,7 @@ public class BasicMonsterController : MonoBehaviour {
             return false;
         }
 
-        if (hit.collider.gameObject.tag == "Ability")
+        if (hit.collider.gameObject.tag == "Ability" || hit.collider.gameObject.tag == "Absorb")
         {
             return false;
         }
@@ -107,7 +108,14 @@ public class BasicMonsterController : MonoBehaviour {
 
     void Absorbed()
     {
-        rb.velocity = Vector2.zero;
-        //TO_DO
+        if (absorbing == false)
+        {
+            rb.velocity = Vector2.zero;
+            var absorbTrapPrefab = Resources.Load("Prefab/AbsorbTrap");
+            var absorbTrap = Instantiate(absorbTrapPrefab) as GameObject;
+            absorbTrap.transform.position = this.transform.position;
+            absorbing = true;
+        }
+        
     }
 }
