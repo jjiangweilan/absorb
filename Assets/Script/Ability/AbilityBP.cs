@@ -20,4 +20,8 @@ public struct AbilityBP {
 
     //description of the ability
     public string description;
+
+    public int[] localPosition;
+
+    public int[] localScale;
 }

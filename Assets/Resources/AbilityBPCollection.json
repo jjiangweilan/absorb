@@ -4,6 +4,8 @@
             "name": "absorb",
             "damage" : 10,
             "damageDelta" : 0.2,
+            "localPosition" : [1, 0, 0],
+            "localScale" : [1, 1, 1],
             "description" : "this ability can absorb enemy's skill! Yeah!"
         }
     ]

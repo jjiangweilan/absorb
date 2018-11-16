@@ -52,7 +52,17 @@ public class BasicMonsterController : MonoBehaviour {
         start.y -= collider_.bounds.size.y / 2.0f;
         var hit = Physics2D.Raycast(start, new Vector3(direction, 0, 0), collider_.bounds.size.x);
 
-        return hit.collider != null;
+        if (hit.collider == null) 
+        {
+            return false;
+        }
+
+        if (hit.collider.gameObject.tag == "Ability")
+        {
+            return false;
+        }
+
+        return true;
     }
 
     //shot a ranged ray basing on current moving direction
@@ -85,5 +95,19 @@ public class BasicMonsterController : MonoBehaviour {
     public void attacked()
     {
 
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Absorb")
+        {
+            Absorbed();
+        }
+    }
+
+    void Absorbed()
+    {
+        rb.velocity = Vector2.zero;
+        //TO_DO
     }
 }

@@ -8,21 +8,23 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float jumpImpulse = 15;
     [SerializeField] private float jumpTestOffset = 0.01f;
     [SerializeField] private Animator animator;
-
-    private bool isWalking;
     // Use this for initialization
+
+    AbilityController abilityController;
+    public bool isWalking;
     void Start () {
         rb = GetComponent<Rigidbody2D>();
+        abilityController = GetComponent<AbilityController>();
     }
     // Update is called once per frame
     void Update () {
         UpdateMovement();
-        UpdateAttack();
     }
 
     private void UpdateMovement()
     {
-
+        if (abilityController.ability.currSkill != null) return;
+        
         bool inputVert = Input.GetKey(KeyCode.W);
         float horSpeed = speed * Input.GetAxis("Horizontal");
 
@@ -43,29 +45,19 @@ public class PlayerController : MonoBehaviour {
             transform.localScale = theScale;
         }
 
-        if (isWalking == true && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
-        {
-            isWalking = false;
-            StartCoroutine(waitAndSetWalkToFalse());
-        }
-
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
         {
             isWalking = true;
-            animator.SetBool("Walk", isWalking);
+            animator.SetBool("Walk", true);
         }
-    }
 
-    private void UpdateAttack()
-    {
-        if (Input.GetAxis("Fire1") != 0)
+        if (isWalking == true && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
         {
-            GetComponent<SpriteRenderer>().color = Color.red;
+            isWalking = false;
+            StartCoroutine(waitAndSetWalk());
         }
-        else
-        {
-            GetComponent<SpriteRenderer>().color = Color.white;
-        }
+
+        
     }
 
     //check if the player is on the ground
@@ -90,12 +82,13 @@ public class PlayerController : MonoBehaviour {
         //DebugDraw();
     }
 
-    private IEnumerator waitAndSetWalkToFalse()
+    private IEnumerator waitAndSetWalk()
     {
         yield return new WaitForSeconds(0.8f);
         animator.SetBool("Walk" , isWalking);
     }
 
+    
     private void DebugDraw(){
         var boxCollider = GetComponent<BoxCollider2D>();
 

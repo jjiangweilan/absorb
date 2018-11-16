@@ -310,6 +310,7 @@ MonoBehaviour:
   jumpImpulse: 12
   jumpTestOffset: 0.03
   animator: {fileID: 1208261469}
+  isWalking: 0
 --- !u!114 &1208261465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1341,7 +1342,7 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2140460802}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
