@@ -58,12 +58,12 @@ public class BasicMonsterController : MonoBehaviour {
             return false;
         }
 
-        if (hit.collider.gameObject.tag == "Ability" || hit.collider.gameObject.tag == "Absorb")
+        if (hit.collider.gameObject.tag == "Ground")
         {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     //shot a ranged ray basing on current moving direction
@@ -102,19 +102,32 @@ public class BasicMonsterController : MonoBehaviour {
     {
         if (other.gameObject.tag == "Absorb")
         {
-            Absorbed();
+            Absorbed(other);
         }
     }
 
-    void Absorbed()
+    void Absorbed(Collider2D absorb)
     {
         if (absorbing == false)
         {
             rb.velocity = Vector2.zero;
+
+            //absorb trap
             var absorbTrapPrefab = Resources.Load("Prefab/AbsorbTrap");
             var absorbTrap = Instantiate(absorbTrapPrefab) as GameObject;
+            
             absorbTrap.transform.position = this.transform.position;
             absorbing = true;
+
+            //absorb catch
+            var absorbCatchPrefab = Resources.Load("Prefab/AbsorbCatch");
+            var absorbCatch = Instantiate(absorbCatchPrefab) as GameObject;
+
+            absorbCatch.transform.SetParent(this.transform);
+            absorbCatch.transform.localPosition = new Vector2(0, 0);
+
+            //freeze absorb skill's animation
+            absorb.gameObject.GetComponent<Animator>().speed = 0;
         }
         
     }
